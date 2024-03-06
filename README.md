@@ -7,7 +7,7 @@ This README provides information on how to use the endpoints provided by the Ima
 Before using the endpoints, ensure you have the following:
 
 - Node.js installed on your machine
-- npm or yarn package manager
+- npm package manager
 - Docker (if you plan to run the service within a Docker container)
 
 ## Installation
