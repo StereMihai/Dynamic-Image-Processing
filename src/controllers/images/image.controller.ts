@@ -11,17 +11,13 @@ import { checkFileExists } from "../../utils/checkFileExists";
 class ImageController implements Controller {
   public path = "/images";
   public router = Router();
-  public cachedMap;
-  public cacheHits;
-  public cacheMisses;
-  public originalFilesNumber;
+  public cachedMap = new Map<string, Buffer>(); // Use specific types for cachedMap
+  public cacheHits = 0;
+  public cacheMisses = 0;
+  public originalFilesNumber = 0;
 
   constructor() {
     this.initializeRoutes();
-    this.cachedMap = new Map();
-    this.cacheHits = 0;
-    this.cacheMisses = 0;
-    this.originalFilesNumber = 0;
   }
 
   private initializeRoutes() {
@@ -41,20 +37,14 @@ class ImageController implements Controller {
   };
 
   private getAllFileNames = async (req: Request, res: Response) => {
-    const directoryPath = process.cwd() + "/uploads";
-
-    fs.readdir(directoryPath, function (err, files) {
-      const fileNames: string[] = [];
-      if (err) {
-        console.log(err);
-        res.status(400).json({ err });
-      }
-      files.forEach(function (file) {
-        fileNames.push(file);
-      });
-
+    try {
+      const directoryPath = process.cwd() + "/uploads";
+      const files = await fs.promises.readdir(directoryPath);
       res.status(200).json({ fileNames: files });
-    });
+    } catch (error) {
+      console.error("Error reading directory:", error);
+      res.status(500).json({ error: "Failed to read directory" });
+    }
   };
 
   private imageProcessing = async (req: Request, res: Response) => {
@@ -63,11 +53,12 @@ class ImageController implements Controller {
 
     const inputPath = process.cwd() + `/uploads/${filename}`;
 
-    const fileExists = await checkFileExists(inputPath);
+    try {
+      const fileExists = await checkFileExists(inputPath);
+      if (!fileExists) {
+        return res.status(404).json({ message: "File not found" });
+      }
 
-    if (!fileExists) {
-      return res.status(400).json({ message: "File does not exists" });
-    } else {
       const cacheKey = generateCacheKey(inputPath, width, height);
 
       if (this.cachedMap.has(cacheKey)) {
@@ -82,6 +73,9 @@ class ImageController implements Controller {
         this.cachedMap.set(cacheKey, processedImage);
         res.send(processedImage);
       }
+    } catch (error) {
+      console.error("Error processing image:", error);
+      res.status(500).json({ error: "Failed to process image" });
     }
   };
 
@@ -95,13 +89,12 @@ class ImageController implements Controller {
       totalImageProcessingRequests === 0
         ? 0
         : (this.cacheMisses / totalImageProcessingRequests) * 100;
-    const totalNumberOfOriginalFiles = this.originalFilesNumber;
 
     res.json({
       totalImageProcessingRequests,
       hitRatio,
       missRatio,
-      totalNumberOfOriginalFiles,
+      totalNumberOfOriginalFiles: this.originalFilesNumber,
     });
   };
 }
