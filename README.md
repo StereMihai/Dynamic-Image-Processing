@@ -37,6 +37,13 @@ To start the service locally, run:
 
 ```bash
 npm start
+```
+
+To run tests, run:
+
+```bash
+npm test
+```
 
 ## Endpoints
 
