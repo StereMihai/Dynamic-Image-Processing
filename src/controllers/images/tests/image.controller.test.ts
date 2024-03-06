@@ -53,6 +53,4 @@ describe("ImageController", () => {
       });
     });
   });
-
-  // Write more describe blocks for other functions
 });

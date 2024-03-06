@@ -62,12 +62,10 @@ class ImageController implements Controller {
       const cacheKey = generateCacheKey(inputPath, width, height);
 
       if (this.cachedMap.has(cacheKey)) {
-        console.log("CACHED");
         this.cacheHits++;
         const processedImage = this.cachedMap.get(cacheKey);
         res.send(processedImage);
       } else {
-        console.log("NOT CACHED");
         this.cacheMisses++;
         const processedImage = await resizeImage(inputPath, width, height);
         this.cachedMap.set(cacheKey, processedImage);
