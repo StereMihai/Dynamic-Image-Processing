@@ -9,6 +9,7 @@ Before using the endpoints, ensure you have the following:
 - Node.js installed on your machine
 - npm package manager
 - Docker (if you plan to run the service within a Docker container)
+> Create an '/uploads' directory at the root of the project. You can either manually upload files to this directory or utilize the "Upload a File" endpoint provided by the service.
 
 ## Installation
 
@@ -70,18 +71,29 @@ The following endpoints are available:
 ### Process and Retrieve Image File
 
 - **Method:** GET
-- **Path:** /images/file/:filename
+- **Path:** /images/:filename
 - **Description:** Process and retrieve an image file by filename.
 - **Query Parameters:** 
   - `resolution`: Optional query parameter specifying the desired width and height of the image.
 - **Response:** 
-  - 400 Bad Request if the file does not exist.
+  - 500 Failed to process file
+  - 400 Bad Request if the query string format is incorrect.
+  - 404 Bad Request if the file does not exist.
   - 200 OK with the processed image data if successful.
+
+### Delete Image File
+
+- **Method:** DELETE
+- **Path:** /images/:filename
+- **Description:** Delete an image file by filename.
+- **Response:** 
+  - 404 Not Found if the file does not exist.
+  - 200 OK with a JSON response `{ message: "File successfully deleted" }` if the file is deleted successfully.
 
 ### Get Statistics
 
 - **Method:** GET
-- **Path:** /images/statistics
+- **Path:** /statistics
 - **Description:** Get statistics on the number of image processing requests, cache hits, cache misses, and total number of original files uploaded.
 - **Response:** 
   - 200 OK with a JSON response containing the following statistics:
