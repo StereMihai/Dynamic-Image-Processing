@@ -32,12 +32,10 @@ export class ImageCache  {
 
     public processAndSetCachedImage = async (cacheKey: string, inputPath: string, width: number, height: number, res: Response) => {
         if (this.cache.cachedMap.has(cacheKey)) {
-            console.log("CACHED");
             this.cache.cacheHits++;
             const processedImage = this.cache.cachedMap.get(cacheKey);
             res.send(processedImage);
           } else {
-            console.log("NOT CACHED");
             this.cache.cacheMisses++;
             try {
                 const processedImage = await resizeImage(inputPath, width, height);

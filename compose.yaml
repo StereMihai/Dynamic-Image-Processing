@@ -11,10 +11,16 @@ services:
   server:
     build:
       context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+    container_name: ts-node-docker
     environment:
-      NODE_ENV: production
+      NODE_ENV: dev
     ports:
       - 4000:4000
+    command: npm run start
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

@@ -46,6 +46,11 @@ To run tests, run:
 npm test
 ```
 
+### Building and running application with Docker
+
+When you're ready, start your application by running:
+`docker compose up --build`.
+
 ## Endpoints
 
 The following endpoints are available:
